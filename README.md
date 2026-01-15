@@ -2,6 +2,6 @@
 CSE325-GroupProject
 
 # Team Members
-Rafael Antunes
-Collin Highwood
-Trystan Jones
+* Rafael Antunes
+* Collin Highwood
+* Trystan Jones
