@@ -5,3 +5,4 @@ CSE325-GroupProject
 * Rafael Antunes
 * Collin Highwood
 * Trystan Jones
+* Alexandre Espinoza
