@@ -85,5 +85,5 @@ F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\ref\Med-Ve
 F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\scopedcss\Components\Pages\Home.razor.rz.scp.css
 F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\scopedcss\Components\Pages\Services.razor.rz.scp.css
 F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\scopedcss\Components\Pages\Vehicles.razor.rz.scp.css
-F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\compressed\qgbzcjlfr4-{0}-ogat3foftw-ogat3foftw.gz
-F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\compressed\qadvta1ksy-{0}-ogat3foftw-ogat3foftw.gz
+F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\compressed\qgbzcjlfr4-{0}-su0lz79ymv-su0lz79ymv.gz
+F:\.NET CSE325\Team Project\Med-Vehicle\Med-Vehicle\obj\Debug\net10.0\compressed\qadvta1ksy-{0}-su0lz79ymv-su0lz79ymv.gz
