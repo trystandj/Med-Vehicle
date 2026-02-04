@@ -1,6 +1,9 @@
 @page "/AddVehicle"
 @using MedVehicle.Models
 @using MedVehicle.MongoDB
+@using MedVehicle.Components 
+@* ^^^ Make sure to add the namespace where you saved ImageUpload.razor *@
+
 @implements IDisposable
 @inject CarService CarService
 @inject NavigationManager Navigation
@@ -16,49 +19,43 @@
                 <DataAnnotationsValidator />
 
                 <div class="row g-3">
-                    @* Make *@
+                    @* --- Section 1: Basic Details --- *@
                     <div class="col-md-6">
                         <label class="form-label">Make</label>
                         <InputText @bind-Value="newCar.Make" class="form-control" placeholder="e.g. Honda" />
                         <ValidationMessage For="@(() => newCar.Make)" class="text-danger small" />
                     </div>
 
-                    @* Model *@
                     <div class="col-md-6">
                         <label class="form-label">Model</label>
                         <InputText @bind-Value="newCar.Model" class="form-control" placeholder="e.g. Civic" />
                         <ValidationMessage For="@(() => newCar.Model)" class="text-danger small" />
                     </div>
 
-                    @* Year *@
                     <div class="col-md-4">
                         <label class="form-label">Year</label>
                         <InputNumber @bind-Value="newCar.Year" class="form-control" />
                         <ValidationMessage For="@(() => newCar.Year)" class="text-danger small" />
                     </div>
 
-                    @* Color *@
                     <div class="col-md-4">
                         <label class="form-label">Color</label>
                         <InputText @bind-Value="newCar.Color" class="form-control" />
                         <ValidationMessage For="@(() => newCar.Color)" class="text-danger small" />
                     </div>
 
-                    @* Mileage *@
                     <div class="col-md-4">
                         <label class="form-label">Mileage</label>
                         <InputNumber @bind-Value="newCar.Mileage" class="form-control" />
                         <ValidationMessage For="@(() => newCar.Mileage)" class="text-danger small" />
                     </div>
 
-                    @* VIN *@
                     <div class="col-md-8">
                         <label class="form-label">VIN</label>
                         <InputText @bind-Value="newCar.Vin" class="form-control" placeholder="17-character VIN" />
                         <ValidationMessage For="@(() => newCar.Vin)" class="text-danger small" />
                     </div>
 
-                    @* Type *@
                     <div class="col-md-4 d-flex align-items-end">
                         <div class="form-check mb-2">
                             <InputCheckbox @bind-Value="newCar.IsElectric" class="form-check-input" id="electricCheck" />
@@ -66,14 +63,35 @@
                         </div>
                     </div>
 
-                    @* Description *@
+                    @* --- Section 2: Image Upload --- *@
+                    <div class="col-12">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <label class="form-label fw-bold">Vehicle Image</label>
+                                
+                                @* 1. Connect the component 
+                                   2. Listen for the 'OnUploadComplete' event 
+                                *@
+                                <ImageUpload OnUploadComplete="HandleImageUploaded" />
+                                
+                                @if (!string.IsNullOrEmpty(newCar.ImageFileName))
+                                {
+                                    <div class="text-success small mt-1">
+                                        <i class="bi bi-check-circle-fill"></i> Image linked successfully.
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    @* --- Section 3: Description --- *@
                     <div class="col-12">
                         <label class="form-label">Description</label>
                         <InputTextArea @bind-Value="newCar.Description" class="form-control" rows="3" />
                         <ValidationMessage For="@(() => newCar.Description)" class="text-danger small" />
                     </div>
 
-                    @* Actions *@
+                    @* --- Actions --- *@
                     <div class="col-12 mt-4 border-top pt-3">
                         <button type="submit" class="btn btn-success px-4" disabled="@isError">
                             Save Vehicle
@@ -93,25 +111,29 @@
     private EditContext? editContext;
     private bool isError = true;
 
-     
     protected override void OnInitialized()
     {
-        @* This initilizes the EditContext for form validation. Every time a field changes, the HandleFieldChanged method is called *@
         editContext = new(newCar);
         editContext.OnFieldChanged += HandleFieldChanged;
     }
 
+
+    private void HandleImageUploaded(string fileName)
+    {
+
+        newCar.ImageFileName = fileName;
+        
+        StateHasChanged();
+    }
+
     private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
-        @* This asks the EditContext to revalidate all fields. If there are no erros with the form we flip the isError flag. *@
         isError = !editContext!.Validate();
-        @* We re-render the component to make the save button enabled/disabled based on validation status *@
         StateHasChanged();
     }
 
     private async Task HandleValidSubmit()
     {
-        @* Only runs if the form is validated, at this point it creates a new car object to our db *@
         try 
         {
             await CarService.CreateAsync(newCar);

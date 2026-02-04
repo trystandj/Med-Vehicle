@@ -1,6 +1,7 @@
 @page "/EditVehicle/{Id}"
 @using MedVehicle.Models
 @using MedVehicle.MongoDB
+@using MedVehicle.Components
 
 @inject CarService CarService
 @inject NavigationManager Navigation
@@ -75,6 +76,22 @@
                             </div>
                         </div>
 
+                        @* --- IMAGE UPLOAD SECTION --- *@
+                        <div class="col-12">
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <label class="form-label fw-bold">Vehicle Image</label>
+                                    
+
+                                    <ImageUpload 
+                                        CurrentFileName="@carToEdit.ImageFileName" 
+                                        OnUploadComplete="HandleImageUploaded" 
+                                    />
+                                    
+                                </div>
+                            </div>
+                        </div>
+
                         @* Description *@
                         <div class="col-12">
                             <label class="form-label">Description</label>
@@ -107,20 +124,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //Fetch the existing car from MongoDB by its PublicId
         carToEdit = await CarService.GetByPublicIdAsync(Id);
         if (carToEdit != null)
         {
-            // Initialize the EditContext with the loaded car
             editContext = new(carToEdit);
             editContext.OnFieldChanged += HandleFieldChanged;
-            
-            
             isError = !editContext.Validate();
         }
         else
         {
-            
             Navigation.NavigateTo("/MyCars");
         }
     }
@@ -131,11 +143,21 @@
         StateHasChanged();
     }
 
+    private void HandleImageUploaded(string fileName)
+    {
+        if (carToEdit is not null)
+        {
+
+            carToEdit.ImageFileName = fileName;
+            
+            StateHasChanged();
+        }
+    }
+
     private async Task HandleValidSubmit()
     {
         try 
         {
-            // Call update on CarService
             await CarService.UpdateByPublicIdAsync(Id, carToEdit!);
             Navigation.NavigateTo("/MyCars");
         }

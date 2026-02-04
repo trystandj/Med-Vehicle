@@ -3,14 +3,12 @@
 @using MedVehicle.Models
 @inject CarService CarService
 
-
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <h3>Available Vehicles</h3>
-        <div>
-        
-        <a href="/AddVehicle" class="btn btn-primary">Add Vehicle</a>
-        </div>
+        <a href="/AddVehicle" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add Vehicle
+        </a>
     </div>
 
     @if (cars == null)
@@ -22,53 +20,90 @@
     }
     else if (!cars.Any())
     {
-        <div class="alert alert-info">No cars found in the database.</div>
+        <div class="alert alert-info shadow-sm">
+            No cars found in the database. <a href="/AddVehicle" class="alert-link">Add your first one!</a>
+        </div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Make & Model</th>
-                        <th>Year</th>
-                        <th>Color</th>
-                        <th>Mileage</th>
-                        <th>VIN</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var car in cars)
-                    {
-                        <tr>
-                            <td><strong>@car.Make</strong> @car.Model</td>
-                            <td>@car.Year</td>
-                            <td>@car.Color</td>
-                            <td>@car.Mileage.ToString("N0") mi</td>
-                            <td>@car.Vin[..4]@(new string('*', car.Vin.Length - 4))</td>
-                            <td>
-                                @if (car.IsElectric)
+        <div class="row">
+            @foreach (var car in cars)
+            {
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm h-100 overflow-hidden">
+                        <div class="row g-0">
+                            
+                            <div class="col-md-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 250px;">
+                                @if (!string.IsNullOrEmpty(car.ImageFileName))
                                 {
-                                    <span class="badge rounded-pill bg-success">Electric</span>
+                                    <img src="/uploads/@car.ImageFileName" 
+                                         class="img-fluid w-100 h-100" 
+                                         style="object-fit: cover; max-height: 300px;" 
+                                         alt="@car.Make @car.Model" />
                                 }
                                 else
                                 {
-                                    <span class="badge rounded-pill bg-secondary">Gas</span>
+                                    <div class="text-center text-muted p-4">
+                                        <i class="bi bi-car-front display-4"></i>
+                                        <p class="mt-2 mb-0">No Image Available</p>
+                                    </div>
                                 }
-                            </td>
-                            <td class="text-muted small">@car.Description</td>
-                            <td>
-                                <a href="/EditVehicle/@car.PublicId" class="btn btn-sm btn-outline-primary">Edit</a>
-                                <a href="/DeleteVehicle/@car.PublicId" class="btn btn-sm btn-outline-danger">Delete</a>
-                            </td>
+                            </div>
 
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                            <div class="col-md-8">
+                                <div class="card-body d-flex flex-column h-100">
+                                    
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h4 class="card-title fw-bold mb-0">
+                                            @car.Year @car.Make @car.Model
+                                        </h4>
+                                        @if (car.IsElectric)
+                                        {
+                                            <span class="badge bg-success rounded-pill">Electric</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">Gas</span>
+                                        }
+                                    </div>
+
+                                    <p class="card-text text-muted small mb-3">
+                                        @(string.IsNullOrEmpty(car.Description) ? "No description provided." : car.Description)
+                                    </p>
+
+                                    <div class="row g-2 mb-4">
+                                        <div class="col-6 col-sm-4">
+                                            <small class="text-uppercase text-muted" style="font-size: 0.75rem;">Color</small>
+                                            <div class="fw-medium">@car.Color</div>
+                                        </div>
+                                        <div class="col-6 col-sm-4">
+                                            <small class="text-uppercase text-muted" style="font-size: 0.75rem;">Mileage</small>
+                                            <div class="fw-medium">@car.Mileage.ToString("N0") mi</div>
+                                        </div>
+                                        <div class="col-12 col-sm-4">
+                                            <small class="text-uppercase text-muted" style="font-size: 0.75rem;">VIN</small>
+                                            <div class="fw-medium font-monospace">
+
+                                                @car.Vin[..4]*****
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-auto border-top pt-3 d-flex justify-content-end gap-2">
+                                        <a href="/EditVehicle/@car.PublicId" class="btn btn-outline-primary btn-sm px-3">
+                                            Edit
+                                        </a>
+                                        <a href="/DeleteVehicle/@car.PublicId" class="btn btn-outline-danger btn-sm px-3">
+                                            Delete
+                                        </a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     }
 </div>
@@ -87,5 +122,4 @@
             Console.WriteLine($"Error fetching cars: {ex.Message}");
         }
     }
-
 }
