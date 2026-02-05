@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MedVehicle.Models;
+namespace Med_Vehicle.Models;
 
 public class User
 {

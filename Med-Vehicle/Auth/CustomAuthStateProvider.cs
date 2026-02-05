@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using MedVehicle.Models;
+using Med_Vehicle.Models;
 
-namespace MedVehicle.Auth;
+namespace Med_Vehicle.Auth;
 
 // Custom Authentication State Provider
 public class CustomAuthStateProvider : AuthenticationStateProvider

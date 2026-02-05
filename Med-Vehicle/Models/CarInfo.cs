@@ -1,4 +1,4 @@
-namespace MedVehicle.Models;
+namespace Med_Vehicle.Models;
 using System.ComponentModel.DataAnnotations;
 
 using global:: MongoDB.Bson;

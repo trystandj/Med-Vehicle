@@ -1,7 +1,7 @@
-namespace MedVehicle.MongoDB;
+namespace Med_Vehicle.MongoDB;
 
-using MedVehicle.Models;
-using MedVehicle.Infrastructure; 
+using Med_Vehicle.Models;
+using Med_Vehicle.Infrastructure; 
 using global::MongoDB.Driver;
 
 public class CarService

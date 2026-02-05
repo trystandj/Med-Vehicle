@@ -1,4 +1,4 @@
-namespace MedVehicle.Infrastructure;
+namespace Med_Vehicle.Infrastructure;
 
 using global::MongoDB.Driver;
 
