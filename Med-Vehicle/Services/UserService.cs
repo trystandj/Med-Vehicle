@@ -1,8 +1,8 @@
-using MedVehicle.Models;
+using Med_Vehicle.Models;
 using MongoDB.Driver;
 using BC = BCrypt.Net.BCrypt;
 
-namespace MedVehicle.Services;
+namespace Med_Vehicle.Services;
 
 
 public class UserService

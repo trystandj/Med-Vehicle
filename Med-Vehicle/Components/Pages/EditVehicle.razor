@@ -1,0 +1,179 @@
+@page "/EditVehicle/{Id}"
+@using Med_Vehicle.Models
+@using Med_Vehicle.MongoDB
+@using Med_Vehicle.Components
+
+@inject CarService CarService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Edit Vehicle</h3>
+        </div>
+        <div class="card-body">
+            @if (carToEdit == null)
+            {
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p>Loading vehicle data...</p>
+                </div>
+            }
+            else
+            {
+                <EditForm EditContext="editContext" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+
+                    <div class="row g-3">
+                        @* Make *@
+                        <div class="col-md-6">
+                            <label class="form-label">Make</label>
+                            <InputText @bind-Value="carToEdit.Make" class="form-control" />
+                            <ValidationMessage For="@(() => carToEdit.Make)" class="text-danger small" />
+                        </div>
+
+                        @* Model *@
+                        <div class="col-md-6">
+                            <label class="form-label">Model</label>
+                            <InputText @bind-Value="carToEdit.Model" class="form-control" />
+                            <ValidationMessage For="@(() => carToEdit.Model)" class="text-danger small" />
+                        </div>
+
+                        @* Year *@
+                        <div class="col-md-4">
+                            <label class="form-label">Year</label>
+                            <InputNumber @bind-Value="carToEdit.Year" class="form-control" />
+                            <ValidationMessage For="@(() => carToEdit.Year)" class="text-danger small" />
+                        </div>
+
+                        @* Color *@
+                        <div class="col-md-4">
+                            <label class="form-label">Color</label>
+                            <InputText @bind-Value="carToEdit.Color" class="form-control" />
+                            <ValidationMessage For="@(() => carToEdit.Color)" class="text-danger small" />
+                        </div>
+
+                        @* Mileage *@
+                        <div class="col-md-4">
+                            <label class="form-label">Mileage</label>
+                            <InputNumber @bind-Value="carToEdit.Mileage" class="form-control" />
+                            <ValidationMessage For="@(() => carToEdit.Mileage)" class="text-danger small" />
+                        </div>
+
+                        @* VIN *@
+                        <div class="col-md-8">
+                            <label class="form-label">VIN</label>
+                            <InputText @bind-Value="carToEdit.Vin" class="form-control" />
+                            <ValidationMessage For="@(() => carToEdit.Vin)" class="text-danger small" />
+                        </div>
+
+                        @* Type *@
+                        <div class="col-md-4 d-flex align-items-end">
+                            <div class="form-check mb-2">
+                                <InputCheckbox @bind-Value="carToEdit.IsElectric" class="form-check-input" id="electricCheck" />
+                                <label class="form-check-label" for="electricCheck">Is Electric Vehicle?</label>
+                            </div>
+                        </div>
+
+                        @* --- IMAGE UPLOAD SECTION --- *@
+                        <div class="col-12">
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <label class="form-label fw-bold">Vehicle Image</label>
+                                    
+
+                                    <ImageUpload 
+                                        CurrentFileName="@carToEdit.ImageFileName" 
+                                        OnUploadComplete="HandleImageUploaded" 
+                                    />
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        @* Description *@
+                        <div class="col-12">
+                            <label class="form-label">Description</label>
+                            <InputTextArea @bind-Value="carToEdit.Description" class="form-control" rows="3" />
+                            <ValidationMessage For="@(() => carToEdit.Description)" class="text-danger small" />
+                        </div>
+
+                        @* Actions *@
+                        <div class="col-12 mt-4 border-top pt-3">
+                            <button type="submit" class="btn btn-success px-4" disabled="@isError">
+                                Update Vehicle
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary px-4" @onclick="Cancel">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </EditForm>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Id { get; set; } = default!;
+    
+    private Car? carToEdit;
+    private EditContext? editContext;
+    private bool isError = false; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        carToEdit = await CarService.GetByPublicIdAsync(Id);
+        if (carToEdit != null)
+        {
+            editContext = new(carToEdit);
+            editContext.OnFieldChanged += HandleFieldChanged;
+            isError = !editContext.Validate();
+        }
+        else
+        {
+            Navigation.NavigateTo("/MyCars");
+        }
+    }
+
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        isError = !editContext!.Validate();
+        StateHasChanged();
+    }
+
+    private void HandleImageUploaded(string fileName)
+    {
+        if (carToEdit is not null)
+        {
+
+            carToEdit.ImageFileName = fileName;
+            
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try 
+        {
+            await CarService.UpdateByPublicIdAsync(Id, carToEdit!);
+            Navigation.NavigateTo("/MyCars");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database Error: {ex.Message}");
+        }
+    }
+
+    private void Cancel() => Navigation.NavigateTo("/MyCars");
+
+    public void Dispose()
+    {
+        if (editContext is not null)
+        {
+            editContext.OnFieldChanged -= HandleFieldChanged;
+        }
+    }
+}
