@@ -1,10 +1,20 @@
+using MedVehicle.Auth;
+using MedVehicle.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Med_Vehicle.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+builder.Services.AddCascadingAuthenticationState(); // Importante para .NET 10
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddSingleton<UserService>();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
 
 var app = builder.Build();
 
