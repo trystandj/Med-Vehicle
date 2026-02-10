@@ -2,11 +2,13 @@
 @using Med_Vehicle.Models
 @using Med_Vehicle.MongoDB
 @using Med_Vehicle.Components 
+@using System.Threading.Tasks
+@using System.Security.Claims
 
-
-@implements IDisposable
 @inject CarService CarService
 @inject NavigationManager Navigation
+
+
 @rendermode InteractiveServer
 
 <div class="container mt-4">
@@ -105,30 +107,21 @@
         </div>
     </div>
 </div>
-
 @code {
     private Car newCar = new();
     private EditContext? editContext;
-    private bool isError = true;
+
+
+    private bool isError = false; 
 
     protected override void OnInitialized()
     {
         editContext = new(newCar);
-        editContext.OnFieldChanged += HandleFieldChanged;
     }
-
 
     private void HandleImageUploaded(string fileName)
     {
-
         newCar.ImageFileName = fileName;
-        
-        StateHasChanged();
-    }
-
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        isError = !editContext!.Validate();
         StateHasChanged();
     }
 
@@ -136,8 +129,15 @@
     {
         try 
         {
+
             await CarService.CreateAsync(newCar);
             Navigation.NavigateTo("/MyCars");
+        }
+        catch (UnauthorizedAccessException)
+        {
+
+            Console.WriteLine("Error: User session expired.");
+            Navigation.NavigateTo("/login");
         }
         catch (Exception ex)
         {
@@ -146,12 +146,4 @@
     }
 
     private void Cancel() => Navigation.NavigateTo("/MyCars");
-
-    public void Dispose()
-    {
-        if (editContext is not null)
-        {
-            editContext.OnFieldChanged -= HandleFieldChanged;
-        }
-    }
 }

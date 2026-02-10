@@ -10,6 +10,9 @@ public class Car
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string UserId { get; set; } = string.Empty;
+
     public string PublicId { get; set; } = Guid.NewGuid().ToString("n");
    
     [Required(ErrorMessage = "Make is required"), MaxLength(50)]
