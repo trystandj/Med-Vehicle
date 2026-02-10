@@ -58,7 +58,7 @@ public class HistoryService
             .FirstOrDefaultAsync();
     }
 
-    // UPDATE: Find by PublicId (AND verify ownership)
+    // UPDATE: Find by PublicId 
     public async Task UpdateByPublicIdAsync(string publicId, History updatedHistory)
     {
         var userId = await GetCurrentUserIdAsync();
@@ -76,7 +76,7 @@ public class HistoryService
         }
     }
 
-    // DELETE: Find by PublicId (AND verify ownership)
+    // DELETE: Find by PublicId 
     public async Task RemoveByPublicIdAsync(string publicId)
     {
         var userId = await GetCurrentUserIdAsync();

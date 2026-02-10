@@ -26,10 +26,6 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/tryst/CSE325GroupProject/CSE325-GroupProject/Med-Vehicle/Components/Layout/CarHistoryCard.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcQ2FySGlzdG9yeUNhcmQucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/tryst/CSE325GroupProject/CSE325-GroupProject/Med-Vehicle/Components/Layout/ImageUpload.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcSW1hZ2VVcGxvYWQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -40,6 +36,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/tryst/CSE325GroupProject/CSE325-GroupProject/Med-Vehicle/Components/Pages/CarDetails/AddHistory.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXJEZXRhaWxzXEFkZEhpc3RvcnkucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/tryst/CSE325GroupProject/CSE325-GroupProject/Med-Vehicle/Components/Pages/CarDetails/CarHistoryCard.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXJEZXRhaWxzXENhckhpc3RvcnlDYXJkLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/tryst/CSE325GroupProject/CSE325-GroupProject/Med-Vehicle/Components/Pages/CarDetails/Main.razor]

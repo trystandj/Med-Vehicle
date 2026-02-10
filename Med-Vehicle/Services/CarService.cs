@@ -44,22 +44,22 @@ public class CarService
         var userId = await GetCurrentUserIdAsync();
         if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException("User not logged in.");
 
-        newCar.UserId = userId; // Force the link here for security
+        newCar.UserId = userId; 
         await _carsCollection.InsertOneAsync(newCar);
     }
         
-    // READ: Get by PublicId (AND verify it belongs to this user)
+    // READ: Get by PublicId 
     public async Task<Car?> GetByPublicIdAsync(string publicId)
     {
         var userId = await GetCurrentUserIdAsync();
         
-        // We check BOTH PublicId AND UserId to ensure ownership
+
         return await _carsCollection
             .Find(x => x.PublicId == publicId && x.UserId == userId)
             .FirstOrDefaultAsync();
     }
 
-    // UPDATE: Find by PublicId (AND verify ownership)
+    // UPDATE: Find by PublicId 
     public async Task UpdateByPublicIdAsync(string publicId, Car updatedCar)
     {
         var userId = await GetCurrentUserIdAsync();
@@ -76,19 +76,17 @@ public class CarService
         }
     }
 
-    // DELETE: Find by PublicId (AND verify ownership)
+    // DELETE: Find by PublicId 
     public async Task RemoveByPublicIdAsync(string publicId)
     {
         var userId = await GetCurrentUserIdAsync();
 
-        // 1. Find the car securely
         var car = await _carsCollection
             .Find(x => x.PublicId == publicId && x.UserId == userId)
             .FirstOrDefaultAsync();
 
         if (car is null) return; 
 
-        // 2. Delete the physical image file
         if (!string.IsNullOrEmpty(car.ImageFileName))
         {
             var filePath = Path.Combine(_environment.WebRootPath, "uploads", car.ImageFileName);
@@ -102,7 +100,6 @@ public class CarService
             }
         }
 
-        // 3. Delete the record from MongoDB
         await _carsCollection.DeleteOneAsync(x => x.PublicId == publicId && x.UserId == userId);
     }
 }

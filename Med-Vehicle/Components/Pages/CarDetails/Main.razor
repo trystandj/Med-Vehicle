@@ -30,7 +30,7 @@
             <div>
                 <h2 class="fw-bold mb-0">@car.Year @car.Make @car.Model</h2>
                 <span class="text-muted small">
-                    <i class="bi bi-upc-scan"></i> @car.Vin
+                    <i class="bi bi-upc-scan"></i> VIN: @car.Vin
                 </span>
             </div>
             <div class="btn-group">
@@ -102,6 +102,7 @@
             <div class="col-lg-5">
                 <CarHistoryCard CarId="@car.Id" PublicId="@car.PublicId" />
             </div>
+            
 
         </div>
     }
