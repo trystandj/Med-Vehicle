@@ -19,7 +19,6 @@ public class CarService
         _authStateProvider = authStateProvider;
     }
 
-    // --- Helper to get current User ID ---
     private async Task<string> GetCurrentUserIdAsync()
     {
         var authState = await _authStateProvider.GetAuthenticationStateAsync();
