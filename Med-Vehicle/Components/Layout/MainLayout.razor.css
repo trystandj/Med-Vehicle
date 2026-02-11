@@ -62,7 +62,7 @@ main {
 }
 
 .top-row > .navbar .navbar-nav.ms-auto {
-    margin-left: auto;
+    margin: auto;
 }
 
 @media (max-width: 640.98px) {
