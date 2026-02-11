@@ -1,0 +1,66 @@
+@using System.IO
+@inject IFileUploadService UploadService
+
+<div class="image-upload-wrapper">
+    <InputFile OnChange="HandleFileSelected" accept=".png,.jpg,.jpeg" class="form-control mb-2" />
+
+    <div class="card p-2" style="width: 300px;">
+        @if (!string.IsNullOrEmpty(CurrentFileName))
+        {
+            <p class="text-muted small mb-1">Current Image:</p>
+            <img src="/uploads/@CurrentFileName" class="img-fluid rounded" />
+        }
+        else
+        {
+            <div class="text-center p-4 bg-light text-muted">
+                No Image Selected
+            </div>
+        }
+    </div>
+
+    @if (isLoading) 
+    { 
+        <div class="text-info mt-1">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Uploading...
+        </div> 
+    }
+    @if (!string.IsNullOrEmpty(errorMessage)) 
+    { 
+        <div class="text-danger mt-1 small">@errorMessage</div> 
+    }
+</div>
+
+@code {
+    [Parameter] public string? CurrentFileName { get; set; }
+    [Parameter] public EventCallback<string> OnUploadComplete { get; set; }
+    [Parameter] public long MaxFileSize { get; set; } = 1024 * 1024 * 5; // 5 MB default
+
+    private bool isLoading;
+    private string? errorMessage;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        var file = e.File;
+        try
+        {
+            // Send the file stream to the uploadservice. The service saves it to disk
+            // and returns the random safe name (e.g., "x9d8f7s.jpg").
+            var storedFileName = await UploadService.UploadFileAsync(file, MaxFileSize);
+            
+            // The add or edit page will update its model and re-render this component 
+            // with the new 'CurrentFileName', causing the <img> tag above to appear.
+            await OnUploadComplete.InvokeAsync(storedFileName);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Upload failed. Please try again.";
+            Console.WriteLine(ex.Message);
+        }
+
+        isLoading = false;
+    }
+}

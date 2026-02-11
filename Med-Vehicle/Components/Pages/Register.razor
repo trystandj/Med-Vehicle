@@ -1,0 +1,56 @@
+@page "/register"
+@rendermode InteractiveServer
+@inject UserService UserService
+@inject NavigationManager Nav
+
+<div class="container mt-5">
+    <div class="card p-4 shadow-sm" style="max-width: 500px; margin: auto;">
+        <h3 class="text-center">Med-Vehicle Register</h3>
+        <hr />
+
+        @if (errorMessage != null) { <div class="alert alert-danger">@errorMessage</div> }
+
+        <EditForm Model="@newUser" OnValidSubmit="HandleRegister">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label>First Name</label>
+                    <InputText @bind-Value="newUser.FirstName" class="form-control" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Last Name</label>
+                    <InputText @bind-Value="newUser.LastName" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>E-mail</label>
+                <InputText @bind-Value="newUser.Email" type="email" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <InputText @bind-Value="newUser.Password" type="password" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Sign Up</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private User newUser = new();
+    private string? errorMessage;
+
+    private async Task HandleRegister()
+    {
+        var existing = await UserService.GetUserByEmailAsync(newUser.Email);
+        if (existing != null)
+        {
+            errorMessage = "This E-mail is already registered.";
+            return;
+        }
+
+        await UserService.CreateUserAsync(newUser);
+        Nav.NavigateTo("/login");
+    }
+}
