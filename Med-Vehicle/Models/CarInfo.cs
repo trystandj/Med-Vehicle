@@ -35,7 +35,7 @@ public class Car
 
     public bool IsElectric { get; set; }
 
-    [MaxLength(200)]
+    [MaxLength(600)]
     public string? Description { get; set; }
 
     public string? ImageFileName { get; set; }

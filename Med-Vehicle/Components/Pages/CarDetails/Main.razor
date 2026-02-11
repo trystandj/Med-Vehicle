@@ -5,7 +5,7 @@
 @inject CarService CarService
 @inject NavigationManager Navigation
 
-<div class="container mt-4">
+<div class="container mt-6">
     
     @if (isLoading)
     {
@@ -45,8 +45,6 @@
 
         <div class="row g-4">
             
-            @* --- LEFT COLUMN: Vehicle Information --- *@
-            <div class="col-lg-7">
                 <div class="card shadow-sm mb-4 border-0">
                     
                     <div class="bg-light text-center overflow-hidden" style="max-height: 400px;">
@@ -96,14 +94,21 @@
                         </p>
                     </div>
                 </div>
-            </div>
-
-            @* --- RIGHT COLUMN: Service History --- *@
-            <div class="col-lg-5">
-                <CarHistoryCard CarId="@car.Id" PublicId="@car.PublicId" />
-            </div>
             
 
+
+            <div class="col-md-6">
+                <CarHistoryCard CarId="@car.Id" PublicId="@car.PublicId" />
+            </div>
+
+
+            <div class="col-md-6">
+                <VehicleModificationsCard CarId="@car.Id" PublicId="@car.PublicId" />
+            </div>
+            
+            <div class="col-12">
+
+            </div>
         </div>
     }
 </div>

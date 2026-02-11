@@ -1,14 +1,14 @@
 @using Med_Vehicle.Models
 @using Med_Vehicle.MongoDB
-@inject HistoryService HistoryService
+@inject VehicleModificationService ModificationService
 @inject IJSRuntime JSRuntime 
 
 <div class="card shadow-sm h-100 position-relative">
     <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-        <h5 class="mb-0 fw-bold text-primary">
-            <i class="bi bi-clock-history me-2"></i>Car History
+        <h5 class="mb-0 fw-bold text-success">
+            <i class="bi bi-tools me-2"></i>Vehicle Modifications
         </h5>
-        <a href="/AddHistory/@PublicId" class="btn btn-sm btn-outline-primary" title="Add Record">
+        <a href="/AddModification/@PublicId" class="btn btn-sm btn-outline-success" title="Add Modification">
             <i class="bi bi-plus-lg me-1"></i> Add 
         </a>
     </div>
@@ -18,33 +18,33 @@
         @if (isLoading)
         {
             <div class="d-flex justify-content-center align-items-center h-100 py-5">
-                <div class="spinner-border text-primary" role="status"></div>
+                <div class="spinner-border text-success" role="status"></div>
             </div>
         }
-        else if (historyItems is null || !historyItems.Any())
+        else if (modItems is null || !modItems.Any())
         {
             <div class="text-center text-muted py-5">
-                <i class="bi bi-journal-x display-6 mb-2"></i>
-                <p>No history records found.</p>
+                <i class="bi bi-clipboard-x display-6 mb-2"></i>
+                <p>No modifications found.</p>
             </div>
         }
         else
         {
             <div class="list-group list-group-flush">
-                @foreach (var item in historyItems)
+                @foreach (var item in modItems)
                 {
                     <div class="list-group-item py-3">
                         <div class="d-flex w-100 justify-content-between align-items-start mb-1">
                             <div>
-                                <h6 class="mb-1 fw-bold text-dark">@item.Event</h6>
+                                <h6 class="mb-1 fw-bold text-dark">@item.Modification</h6>
                                 <small class="text-muted d-block">
-                                    @item.DateOfEvent.ToString("MMM dd, yyyy")
+                                    @item.DateInstalled.ToString("MMM dd, yyyy")
                                 </small>
                             </div>
 
                             <button class="btn btn-outline-danger"
                                     @onclick="() => RequestDelete(item.PublicId)"
-                                    title="Delete Record">
+                                    title="Delete Modification">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
                         </div>
@@ -74,7 +74,7 @@
                     <button type="button" class="btn-close" @onclick="CloseModal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this history record?</p>
+                    <p>Are you sure you want to delete this modification?</p>
                     <p class="small text-muted mb-0">This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
@@ -102,7 +102,7 @@
     [Parameter]
     public string PublicId { get; set; } = string.Empty;
 
-    private List<History> historyItems = new();
+    private List<VehicleModifications> modItems = new();
     private bool isLoading = true;
 
     private bool showDeleteModal = false;
@@ -113,20 +113,20 @@
     {
         if (!string.IsNullOrEmpty(CarId))
         {
-            await LoadHistory();
+            await LoadModifications();
         }
     }
 
-    private async Task LoadHistory()
+    private async Task LoadModifications()
     {
         isLoading = true;
         try
         {
-            historyItems = await HistoryService.GetHistoryByCarIdAsync(CarId);
+            modItems = await ModificationService.GetModificationsByCarIdAsync(CarId);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading history: {ex.Message}");
+            Console.WriteLine($"Error loading modifications: {ex.Message}");
         }
         finally
         {
@@ -134,9 +134,9 @@
         }
     }
 
-    private void RequestDelete(string historyPublicId)
+    private void RequestDelete(string modPublicId)
     {
-        itemToDeleteId = historyPublicId;
+        itemToDeleteId = modPublicId;
         showDeleteModal = true;
     }
 
@@ -153,13 +153,13 @@
         isDeleting = true;
         try
         {
-            await HistoryService.RemoveByPublicIdAsync(itemToDeleteId);
-            await LoadHistory();
-            CloseModal();
+            await ModificationService.RemoveByPublicIdAsync(itemToDeleteId);
+            await LoadModifications();
+            CloseModal(); 
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error deleting history: {ex.Message}");
+            Console.WriteLine($"Error deleting modification: {ex.Message}");
         }
         finally
         {

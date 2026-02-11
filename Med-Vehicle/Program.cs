@@ -35,6 +35,9 @@ builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 // 4. Register the History Service
 builder.Services.AddScoped<HistoryService>();
 
+// 5. Register the Vehicle Modification Service
+builder.Services.AddScoped<VehicleModificationService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
