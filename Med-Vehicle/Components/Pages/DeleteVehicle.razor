@@ -1,0 +1,81 @@
+@page "/DeleteVehicle/{PublicId}"
+@using Med_Vehicle.Models
+@using Med_Vehicle.MongoDB
+@inject CarService CarService
+@inject NavigationManager Navigation
+
+@rendermode InteractiveServer
+
+<div class="container mt-4">
+    <div class="card border-danger shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0">Confirm Deletion</h3>
+        </div>
+        <div class="card-body">
+            @if (carToDelete == null)
+            {
+                <div class="text-center">
+                    <div class="spinner-border text-danger" role="status"></div>
+                    <p>Locating vehicle...</p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h4 class="alert-heading">Are you sure?</h4>
+                    <p>You are about to permanently remove the following vehicle from the database. This action cannot be undone.</p>
+                </div>
+
+                <div class="mb-4 p-3 bg-light rounded border">
+                    <ul class="list-unstyled mb-0">
+                        <li><strong>Vehicle:</strong> @carToDelete.Year @carToDelete.Make @carToDelete.Model</li>
+                        <li><strong>Color:</strong> @carToDelete.Color</li>
+                        <li><strong>VIN:</strong> <code class="text-dark">@carToDelete.Vin</code></li>
+                    </ul>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button class="btn btn-danger px-4" @onclick="ConfirmDelete">
+                        Yes, Delete Vehicle
+                    </button>  
+
+                    <button class="btn btn-secondary px-4" @onclick="Cancel">
+                        Cancel (Go Back)
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string PublicId { get; set; } = default!;
+    
+    private Car? carToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the car using our secure PublicId method
+        carToDelete = await CarService.GetByPublicIdAsync(PublicId);
+
+        if (carToDelete == null)
+        {
+            Navigation.NavigateTo("/MyCars");
+        }
+    }
+
+    private async Task ConfirmDelete()
+    {
+        try 
+        {
+            await CarService.RemoveByPublicIdAsync(PublicId);
+            Navigation.NavigateTo("/MyCars");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during deletion: {ex.Message}");
+        }
+    }
+
+    private void Cancel() => Navigation.NavigateTo("/MyCars");
+}
