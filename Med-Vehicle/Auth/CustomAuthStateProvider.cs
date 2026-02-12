@@ -32,9 +32,8 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             // Create claims principal
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
-                // Name + lastname claim
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                // add email claim
+                new Claim(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
             }, "CustomAuth"));
@@ -59,6 +58,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                new Claim(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
             }, "CustomAuth"));

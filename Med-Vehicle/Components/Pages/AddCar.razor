@@ -2,11 +2,13 @@
 @using Med_Vehicle.Models
 @using Med_Vehicle.MongoDB
 @using Med_Vehicle.Components 
+@using System.Threading.Tasks
+@using System.Security.Claims
 
-
-@implements IDisposable
 @inject CarService CarService
 @inject NavigationManager Navigation
+
+
 @rendermode InteractiveServer
 
 <div class="container mt-4">
@@ -19,7 +21,7 @@
                 <DataAnnotationsValidator />
 
                 <div class="row g-3">
-                    @* --- Section 1: Basic Details --- *@
+
                     <div class="col-md-6">
                         <label class="form-label">Make</label>
                         <InputText @bind-Value="newCar.Make" class="form-control" placeholder="e.g. Honda" />
@@ -63,15 +65,11 @@
                         </div>
                     </div>
 
-                    @* --- Section 2: Image Upload --- *@
                     <div class="col-12">
                         <div class="card bg-light border-0">
                             <div class="card-body">
                                 <label class="form-label fw-bold">Vehicle Image</label>
-                                
-                                @* 1. Connect the component 
-                                   2. Listen for the 'OnUploadComplete' event 
-                                *@
+
                                 <ImageUpload OnUploadComplete="HandleImageUploaded" />
                                 
                                 @if (!string.IsNullOrEmpty(newCar.ImageFileName))
@@ -84,14 +82,12 @@
                         </div>
                     </div>
 
-                    @* --- Section 3: Description --- *@
                     <div class="col-12">
                         <label class="form-label">Description</label>
                         <InputTextArea @bind-Value="newCar.Description" class="form-control" rows="3" />
                         <ValidationMessage For="@(() => newCar.Description)" class="text-danger small" />
                     </div>
 
-                    @* --- Actions --- *@
                     <div class="col-12 mt-4 border-top pt-3">
                         <button type="submit" class="btn btn-success px-4" disabled="@isError">
                             Save Vehicle
@@ -105,30 +101,21 @@
         </div>
     </div>
 </div>
-
 @code {
     private Car newCar = new();
     private EditContext? editContext;
-    private bool isError = true;
+
+
+    private bool isError = false; 
 
     protected override void OnInitialized()
     {
         editContext = new(newCar);
-        editContext.OnFieldChanged += HandleFieldChanged;
     }
-
 
     private void HandleImageUploaded(string fileName)
     {
-
         newCar.ImageFileName = fileName;
-        
-        StateHasChanged();
-    }
-
-    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        isError = !editContext!.Validate();
         StateHasChanged();
     }
 
@@ -136,8 +123,15 @@
     {
         try 
         {
+
             await CarService.CreateAsync(newCar);
             Navigation.NavigateTo("/MyCars");
+        }
+        catch (UnauthorizedAccessException)
+        {
+
+            Console.WriteLine("Error: User session expired.");
+            Navigation.NavigateTo("/login");
         }
         catch (Exception ex)
         {
@@ -146,12 +140,4 @@
     }
 
     private void Cancel() => Navigation.NavigateTo("/MyCars");
-
-    public void Dispose()
-    {
-        if (editContext is not null)
-        {
-            editContext.OnFieldChanged -= HandleFieldChanged;
-        }
-    }
 }

@@ -1,0 +1,169 @@
+@using Med_Vehicle.Models
+@using Med_Vehicle.MongoDB
+@inject HistoryService HistoryService
+@inject IJSRuntime JSRuntime 
+
+<div class="card shadow-sm h-100 position-relative">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold text-primary">
+            <i class="bi bi-clock-history me-2"></i>Car History
+        </h5>
+        <a href="/AddHistory/@PublicId" class="btn btn-sm btn-outline-primary" title="Add Record">
+            <i class="bi bi-plus-lg me-1"></i> Add 
+        </a>
+    </div>
+
+    <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+        
+        @if (isLoading)
+        {
+            <div class="d-flex justify-content-center align-items-center h-100 py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+            </div>
+        }
+        else if (historyItems is null || !historyItems.Any())
+        {
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-journal-x display-6 mb-2"></i>
+                <p>No history records found.</p>
+            </div>
+        }
+        else
+        {
+            <div class="list-group list-group-flush">
+                @foreach (var item in historyItems)
+                {
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between align-items-start mb-1">
+                            <div>
+                                <h6 class="mb-1 fw-bold text-dark">@item.Event</h6>
+                                <small class="text-muted d-block">
+                                    @item.DateOfEvent.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+
+                            <button class="btn btn-outline-danger"
+                                    @onclick="() => RequestDelete(item.PublicId)"
+                                    title="Delete Record">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(item.Notes))
+                        {
+                            <p class="mb-0 text-muted small fst-italic mt-2">
+                                "@item.Notes"
+                            </p>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@if (showDeleteModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this history record?</p>
+                    <p class="small text-muted mb-0">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="ConfirmDelete">
+                        @if (isDeleting)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1"></span> <span>Deleting...</span>
+                        }
+                        else
+                        {
+                            <span>Delete Record</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string CarId { get; set; } = string.Empty;
+
+    [Parameter]
+    public string PublicId { get; set; } = string.Empty;
+
+    private List<History> historyItems = new();
+    private bool isLoading = true;
+
+    private bool showDeleteModal = false;
+    private string? itemToDeleteId;
+    private bool isDeleting = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(CarId))
+        {
+            await LoadHistory();
+        }
+    }
+
+    private async Task LoadHistory()
+    {
+        isLoading = true;
+        try
+        {
+            historyItems = await HistoryService.GetHistoryByCarIdAsync(CarId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading history: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void RequestDelete(string historyPublicId)
+    {
+        itemToDeleteId = historyPublicId;
+        showDeleteModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showDeleteModal = false;
+        itemToDeleteId = null;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (string.IsNullOrEmpty(itemToDeleteId)) return;
+
+        isDeleting = true;
+        try
+        {
+            await HistoryService.RemoveByPublicIdAsync(itemToDeleteId);
+            await LoadHistory();
+            CloseModal();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting history: {ex.Message}");
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+}
