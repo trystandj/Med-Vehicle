@@ -42,4 +42,7 @@ public class Car
     [BsonElement("UserId")]
     [BsonRepresentation(BsonType.ObjectId)]
     public string? UserId { get; set; }
+
+    // Optional registration information for this vehicle
+    public RegistrationInfo? Registration { get; set; }
 }

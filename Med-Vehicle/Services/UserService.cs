@@ -35,4 +35,8 @@ public async Task<User?> GetUserAsync(string email, string password)
 // Retrieve user by email only
 public async Task<User?> GetUserByEmailAsync(string email) =>
     await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
+
+    // Retrieve user by id
+    public async Task<User?> GetUserByIdAsync(string id) =>
+        await _users.Find(u => u.Id == id).FirstOrDefaultAsync();
 }

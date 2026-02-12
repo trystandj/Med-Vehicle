@@ -1,0 +1,88 @@
+@page "/reminders"
+@using Med_Vehicle.Services
+@using Med_Vehicle.Models
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+@inject ReminderService ReminderService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Due Registration Reminders</h3>
+
+<div class="mb-3">
+    <button class="btn btn-outline-primary me-2" @onclick="LoadDue">Refresh</button>
+    <button class="btn btn-primary" @onclick="SendAll" disabled="@sending">Send All Due</button>
+    @if (sending)
+    {
+        <span class="ms-3">Sending...</span>
+    }
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="mt-3 alert @statusClass">@statusMessage</div>
+    }
+</div>
+
+@if (dueList is null)
+{
+    <p>No data loaded.</p>
+}
+else if (!dueList.Any())
+{
+    <p>No reminders due.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Owner</th>
+                <th>Email</th>
+                <th>Vehicle</th>
+                <th>Reminder Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in dueList)
+            {
+                <tr>
+                    <td>@item.OwnerName</td>
+                    <td>@item.OwnerEmail</td>
+                    <td>@item.CarInfo</td>
+                    <td>@item.ReminderDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<ReminderItem>? dueList;
+    private bool sending = false;
+    private string statusMessage = string.Empty;
+    private string statusClass = "alert-info";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDue();
+    }
+
+    private async Task LoadDue()
+    {
+        dueList = await ReminderService.GetDueRemindersAsync(DateTime.UtcNow);
+        statusMessage = string.Empty;
+        StateHasChanged();
+    }
+
+    private async Task SendAll()
+    {
+        sending = true;
+        statusMessage = string.Empty;
+        StateHasChanged();
+
+        var sent = await ReminderService.SendDueRemindersAsync(DateTime.UtcNow);
+
+        sending = false;
+        statusMessage = $"Sent {sent} reminders.";
+        statusClass = "alert-success";
+        await LoadDue();
+    }
+}

@@ -1,0 +1,50 @@
+@page "/send-reminder"
+@using Med_Vehicle.Services
+@inject EmailService EmailService
+
+<h3>Send Reminder Email</h3>
+
+<div class="mb-3">
+    <label class="form-label">To (email)</label>
+    <input class="form-control" @bind="toEmail" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Subject</label>
+    <input class="form-control" @bind="subject" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Body</label>
+    <textarea class="form-control" @bind="body" rows="6"></textarea>
+</div>
+
+<button class="btn btn-primary" @onclick="Send">Send</button>
+
+@if (!string.IsNullOrEmpty(statusMessage))
+{
+    <div class="mt-3 alert @statusClass">@statusMessage</div>
+}
+
+@code {
+    private string toEmail = string.Empty;
+    private string subject = "Registration Reminder";
+    private string body = "Your vehicle registration is due soon. Please renew it.";
+    private string statusMessage = string.Empty;
+    private string statusClass = "alert-info";
+
+    private async Task Send()
+    {
+        try
+        {
+            await EmailService.SendReminderEmailAsync(toEmail, subject, body);
+            statusMessage = "Email sent successfully.";
+            statusClass = "alert-success";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error sending email: {ex.Message}";
+            statusClass = "alert-danger";
+        }
+    }
+}

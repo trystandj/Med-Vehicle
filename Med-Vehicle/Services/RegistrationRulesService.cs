@@ -1,6 +1,6 @@
-using YourApp.Models;
+using Med_Vehicle.Models;
 
-namespace YourApp.Services;
+namespace Med_Vehicle.Services;
 
 public class RegistrationRulesService
 {
