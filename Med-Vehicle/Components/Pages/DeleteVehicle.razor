@@ -55,7 +55,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Load the car using our secure PublicId method
         carToDelete = await CarService.GetByPublicIdAsync(PublicId);
 
         if (carToDelete == null)

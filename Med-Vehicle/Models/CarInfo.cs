@@ -11,6 +11,9 @@ public class Car
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
 
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string UserId { get; set; } = string.Empty;
+
     public string PublicId { get; set; } = Guid.NewGuid().ToString("n");
    
     [Required(ErrorMessage = "Make is required"), MaxLength(50)]
@@ -33,13 +36,10 @@ public class Car
 
     public bool IsElectric { get; set; }
 
-    [MaxLength(200)]
+    [MaxLength(600)]
     public string? Description { get; set; }
 
     public string? ImageFileName { get; set; }
 
-    // Link to the user who created/owns this car (stored as ObjectId in Mongo)
-    [BsonElement("UserId")]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string? UserId { get; set; }
+
 }
