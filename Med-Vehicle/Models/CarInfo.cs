@@ -41,5 +41,12 @@ public class Car
 
     public string? ImageFileName { get; set; }
 
+    // Link to the user who created/owns this car (stored as ObjectId in Mongo)
+    [BsonElement("UserId")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string? UserId { get; set; }
+
+    // Optional registration information for this vehicle
+    public RegistrationInfo? Registration { get; set; }
 
 }

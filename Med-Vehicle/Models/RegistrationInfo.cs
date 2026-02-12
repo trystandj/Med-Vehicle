@@ -1,4 +1,7 @@
-namespace YourApp.Models;
+using System;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace Med_Vehicle.Models;
 
 public class RegistrationInfo
 {

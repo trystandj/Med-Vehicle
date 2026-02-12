@@ -20,9 +20,16 @@ builder.Services.AddSingleton<UserService>();
 
 
 // Add services to the container.
+// Bind email settings and register email service
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<EmailService>();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 // builder.Services.AddScoped<EmailService>(); Uncommit when email service is needed
+
+// Reminder service for manual sending of due reminders
+builder.Services.AddScoped<ReminderService>();
 
 // 1. Register the DB Context
 builder.Services.AddSingleton<NamedCollection, MongoDbContext>();
@@ -63,7 +70,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
-app.UseStaticFiles(); 
+app.UseStaticFiles();
 
 app.UseAntiforgery();
 
