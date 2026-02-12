@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using global:: MongoDB.Bson;
 using global:: MongoDB.Bson.Serialization.Attributes;
 
+[BsonIgnoreExtraElements]
 public class Car
 {
     [BsonId]
@@ -39,4 +40,9 @@ public class Car
     public string? Description { get; set; }
 
     public string? ImageFileName { get; set; }
+
+    // Link to the user who created/owns this car (stored as ObjectId in Mongo)
+    [BsonElement("UserId")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string? UserId { get; set; }
 }

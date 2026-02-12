@@ -22,6 +22,7 @@ builder.Services.AddSingleton<UserService>();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+// builder.Services.AddScoped<EmailService>(); Uncommit when email service is needed
 
 // 1. Register the DB Context
 builder.Services.AddSingleton<NamedCollection, MongoDbContext>();
