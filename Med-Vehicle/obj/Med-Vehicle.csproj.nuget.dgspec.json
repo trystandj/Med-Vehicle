@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tryst\\CSE325GroupProject\\CSE325-GroupProject\\Med-Vehicle\\Med-Vehicle.csproj": {}
+    "C:\\Users\\Pichau\\Desktop\\BYU\\MedVehicle\\Med-Vehicle\\Med-Vehicle\\Med-Vehicle.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tryst\\CSE325GroupProject\\CSE325-GroupProject\\Med-Vehicle\\Med-Vehicle.csproj": {
+    "C:\\Users\\Pichau\\Desktop\\BYU\\MedVehicle\\Med-Vehicle\\Med-Vehicle\\Med-Vehicle.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tryst\\CSE325GroupProject\\CSE325-GroupProject\\Med-Vehicle\\Med-Vehicle.csproj",
+        "projectUniqueName": "C:\\Users\\Pichau\\Desktop\\BYU\\MedVehicle\\Med-Vehicle\\Med-Vehicle\\Med-Vehicle.csproj",
         "projectName": "Med-Vehicle",
-        "projectPath": "C:\\Users\\tryst\\CSE325GroupProject\\CSE325-GroupProject\\Med-Vehicle\\Med-Vehicle.csproj",
-        "packagesPath": "C:\\Users\\tryst\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tryst\\CSE325GroupProject\\CSE325-GroupProject\\Med-Vehicle\\obj\\",
+        "projectPath": "C:\\Users\\Pichau\\Desktop\\BYU\\MedVehicle\\Med-Vehicle\\Med-Vehicle\\Med-Vehicle.csproj",
+        "packagesPath": "C:\\Users\\Pichau\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Pichau\\Desktop\\BYU\\MedVehicle\\Med-Vehicle\\Med-Vehicle\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\tryst\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Pichau\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -55,7 +55,7 @@
             "Microsoft.AspNetCore.App.Internal.Assets": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.1, )",
+              "version": "[10.0.2, )",
               "autoReferenced": true
             },
             "MongoDB.Driver": {
@@ -82,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

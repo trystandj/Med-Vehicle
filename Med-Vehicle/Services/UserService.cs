@@ -35,4 +35,23 @@ public async Task<User?> GetUserAsync(string email, string password)
 // Retrieve user by email only
 public async Task<User?> GetUserByEmailAsync(string email) =>
     await _users.Find(u => u.Email == email).FirstOrDefaultAsync();
+
+
+
+
+
+//method to update user info with optional password change
+public async Task UpdateUserAsync(User updatedUser, string? newPassword = null)
+{
+    // If a new password is provided will hash it before updating
+    if (!string.IsNullOrWhiteSpace(newPassword))
+    {
+        updatedUser.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+    }
+
+    //Replace the existing user document with the updated one
+    await _users.ReplaceOneAsync(u => u.Id == updatedUser.Id, updatedUser);
 }
+
+}
+
