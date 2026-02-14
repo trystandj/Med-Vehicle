@@ -51,6 +51,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/login"; 
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddSingleton<UserService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<EmailService>();
@@ -98,6 +105,9 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/uploads"
 });
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 
