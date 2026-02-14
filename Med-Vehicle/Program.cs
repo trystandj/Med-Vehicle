@@ -10,6 +10,34 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var currentDir = Directory.GetCurrentDirectory();
+var webRoot = builder.Environment.WebRootPath;
+Console.WriteLine($"[DIAGNOSTIC] Current Directory: {currentDir}");
+Console.WriteLine($"[DIAGNOSTIC] WebRootPath: {webRoot}");
+
+
+var blazorPath = Path.Combine(webRoot ?? "", "_framework", "blazor.web.js");
+if (File.Exists(blazorPath))
+{
+    Console.WriteLine($"[DIAGNOSTIC] ✅ FOUND blazor.web.js at: {blazorPath}");
+}
+else
+{
+    Console.WriteLine($"[DIAGNOSTIC] ❌ FILE NOT FOUND at: {blazorPath}");
+    Console.WriteLine("[DIAGNOSTIC] Listing all files in WebRoot to find it:");
+    if (Directory.Exists(webRoot))
+    {
+        foreach (var file in Directory.GetFiles(webRoot, "*", SearchOption.AllDirectories))
+        {
+            Console.WriteLine($" - {file}");
+        }
+    }
+    else
+    {
+         Console.WriteLine($"[DIAGNOSTIC] ❌ WebRoot directory does not exist!");
+    }
+}
+
 DotNetEnv.Env.Load();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -23,6 +51,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/login"; 
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    });
+builder.Services.AddAuthorization();
 builder.Services.AddSingleton<UserService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<EmailService>();
@@ -70,6 +105,9 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/uploads"
 });
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 
