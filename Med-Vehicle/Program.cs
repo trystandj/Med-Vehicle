@@ -10,32 +10,23 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load env variables
+// Load Env
 DotNetEnv.Env.Load();
+
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    options.KnownNetworks.Clear(); 
+    options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
 
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddSingleton<UserService>();
-
-var webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-if (!Directory.Exists(webRoot))
-{
-    Directory.CreateDirectory(webRoot); 
-}
-builder.WebHost.UseWebRoot(webRoot);
-builder.WebHost.UseStaticWebAssets();
-
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ReminderService>();
@@ -49,7 +40,6 @@ var app = builder.Build();
 
 
 app.UseForwardedHeaders();
-
 
 if (!app.Environment.IsDevelopment())
 {
@@ -72,9 +62,9 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
+
 app.UseStaticFiles(); 
 app.UseAntiforgery();
-
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
