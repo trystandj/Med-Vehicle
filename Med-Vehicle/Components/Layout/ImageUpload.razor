@@ -1,4 +1,5 @@
 @using System.IO
+@using Med_Vehicle.Services 
 @inject IFileUploadService UploadService
 
 <div class="image-upload-wrapper">
@@ -8,7 +9,8 @@
         @if (!string.IsNullOrEmpty(CurrentFileName))
         {
             <p class="text-muted small mb-1">Current Image:</p>
-            <img src="/uploads/@CurrentFileName" class="img-fluid rounded" />
+
+            <img src="/uploads/@CurrentFileName?v=@DateTime.Now.Ticks" class="img-fluid rounded" />
         }
         else
         {
@@ -47,20 +49,26 @@
         var file = e.File;
         try
         {
-            // Send the file stream to the uploadservice. The service saves it to disk
-            // and returns the random safe name (e.g., "x9d8f7s.jpg").
             var storedFileName = await UploadService.UploadFileAsync(file, MaxFileSize);
             
-            // The add or edit page will update its model and re-render this component 
-            // with the new 'CurrentFileName', causing the <img> tag above to appear.
-            await OnUploadComplete.InvokeAsync(storedFileName);
+            if (!string.IsNullOrEmpty(storedFileName))
+            {
+                CurrentFileName = storedFileName; 
+                await OnUploadComplete.InvokeAsync(storedFileName);
+            }
+            else
+            {
+                errorMessage = "Upload failed. The server returned an empty filename.";
+            }
         }
         catch (Exception ex)
         {
             errorMessage = "Upload failed. Please try again.";
-            Console.WriteLine(ex.Message);
+            Console.WriteLine($"Upload Error: {ex.Message}");
         }
-
-        isLoading = false;
+        finally
+        {
+            isLoading = false;
+        }
     }
 }

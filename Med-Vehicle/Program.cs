@@ -15,7 +15,7 @@ var webRoot = builder.Environment.WebRootPath;
 Console.WriteLine($"[DIAGNOSTIC] Current Directory: {currentDir}");
 Console.WriteLine($"[DIAGNOSTIC] WebRootPath: {webRoot}");
 
-// specific check for the missing file
+
 var blazorPath = Path.Combine(webRoot ?? "", "_framework", "blazor.web.js");
 if (File.Exists(blazorPath))
 {

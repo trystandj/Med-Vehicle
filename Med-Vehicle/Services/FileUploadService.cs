@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System.IO;
 
+namespace Med_Vehicle.Services; 
+
 public class FileUploadService : IFileUploadService
 {
     private readonly IWebHostEnvironment _environment;
@@ -18,23 +20,18 @@ public class FileUploadService : IFileUploadService
     {
         try
         {
-            // 1. Determine the Root Path safely for Railway
-            // If WebRootPath is null, we fallback to the current directory's wwwroot
             var rootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             var uploadsFolder = Path.Combine(rootPath, "uploads");
 
-            // 2. Ensure the directory exists
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            // 3. Preserve the file extension while keeping a trusted random name
             var extension = Path.GetExtension(file.Name);
             var trustedFileName = $"{Path.GetRandomFileName()}{extension}";
             var fullPath = Path.Combine(uploadsFolder, trustedFileName);
 
-            // 4. Stream and Save
             await using FileStream fs = new(fullPath, FileMode.Create);
             await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
 
@@ -45,7 +42,6 @@ public class FileUploadService : IFileUploadService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Railway Upload Error for {Name}: {Message}", file.Name, ex.Message);
-            // Returning empty string instead of throwing prevents a hard crash in the Blazor circuit
             return string.Empty; 
         }
     }
