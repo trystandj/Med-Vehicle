@@ -8,6 +8,8 @@ using Med_Vehicle.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.HttpOverrides;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 var currentDir = Directory.GetCurrentDirectory();
