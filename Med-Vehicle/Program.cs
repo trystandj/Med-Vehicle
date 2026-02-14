@@ -10,9 +10,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load Env
 DotNetEnv.Env.Load();
-
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -20,7 +18,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownNetworks.Clear();
     options.KnownProxies.Clear();
 });
-
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -39,6 +36,16 @@ builder.Services.AddScoped<VehicleModificationService>();
 var app = builder.Build();
 
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Headers.TryGetValue("X-Forwarded-Proto", out var proto) 
+        && proto == "https")
+    {
+        context.Request.Scheme = "https";
+    }
+    await next();
+});
+
 app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
@@ -49,6 +56,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(); 
 
 var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads");
 if (!Directory.Exists(uploadsPath))
@@ -62,8 +71,6 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
-
-app.UseStaticFiles(); 
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
