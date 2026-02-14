@@ -5,11 +5,13 @@
 @inject NavigationManager Nav
 
 <div class="container mt-5">
-    <h3>Login Med-Vehicle</h3>
+    <div class="card p-4 shadow-sm" style="max-width: 500px; margin: auto;">
+        <h3>Login Med-Vehicle</h3>
     @if (error != null) { <div class="alert alert-danger">@error</div> }
     <input @bind="email" class="form-control mb-2" placeholder="E-mail" />
     <input @bind="pass" type="password" class="form-control mb-2" placeholder="Password" />
     <button @onclick="HandleLogin" class="btn btn-primary">Sign In</button>
+    </div>
 </div>
 
 @code {

@@ -23,11 +23,15 @@
                     <span class="nav-link text-white">Welcome, @firstName</span>
 
                     <NavLink class="nav-link text-white" href="MyCars">
-                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> My Cars
+                        <span class="bi bi-list-nested-nav-menu bi bi-car-front" aria-hidden="true"></span> My Cars
                     </NavLink>
 
                     <NavLink class="nav-link text-white" href="/reminders">
                         <span class="bi bi-bell" aria-hidden="true"></span> Reminders
+                    </NavLink>
+
+                    <NavLink class="nav-link text-white" href="/profile">
+                        <span class="bi bi-person" aria-hidden="true"></span> Profile
                     </NavLink>
 
                     <button class="nav-link btn btn-link text-white border-0 p-0" @onclick="DoLogout">

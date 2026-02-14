@@ -89,4 +89,18 @@ public class UserService
 
     public async Task<User?> GetUserByIdAsync(string id) =>
         await _users.Find(u => u.Id == id).FirstOrDefaultAsync();
+
+//method to update user info with optional password change
+public async Task UpdateUserAsync(User updatedUser, string? newPassword = null)
+{
+    // If a new password is provided will hash it before updating
+    if (!string.IsNullOrWhiteSpace(newPassword))
+    {
+        updatedUser.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+    }
+
+    //Replace the existing user document with the updated one
+    await _users.ReplaceOneAsync(u => u.Id == updatedUser.Id, updatedUser);
+}
+
 }

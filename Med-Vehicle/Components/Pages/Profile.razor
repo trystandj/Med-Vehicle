@@ -1,0 +1,104 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject UserService UserService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+
+<div class="container mt-5">
+    <div class="card shadow-sm p-4" style="max-width: 600px; margin: auto;">
+        <h3>My Profile</h3>
+        <hr />
+
+        @if (user == null)
+        {
+            <p>Loading data...</p>
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <div class="alert @messageClass">@message</div>
+            }
+
+            <EditForm Model="@user" OnValidSubmit="HandleUpdate">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">First Name</label>
+                        <InputText @bind-Value="user.FirstName" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Last Name</label>
+                        <InputText @bind-Value="user.LastName" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">E-mail (Not Editable)</label>
+                    <input type="text" class="form-control" value="@user.Email" disabled />
+                </div>
+
+                <div class="card bg-light p-3 mb-3">
+                    <h5>Change Password</h5>
+                    <small class="text-muted">Put in blank if you don't want to change</small>
+                    <div class="mt-2">
+                        <label class="form-label">New Password</label>
+                        <input type="password" @bind="newPassword" class="form-control" placeholder="******" />
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="/" class="btn btn-outline-secondary">Go home</a>
+                </div>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    private User? user;
+    private string? newPassword;
+    private string? message;
+    private string messageClass = "alert-info";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //take the email from the current logged user
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var email = authState.User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+
+        if (email != null)
+        {
+            //find the user in the database through the email
+            user = await UserService.GetUserByEmailAsync(email);
+        }
+    }
+
+    private async Task HandleUpdate()
+    {
+        if (user == null) return;
+
+        try
+        {
+            //call the service to update the user info in the database
+            await UserService.UpdateUserAsync(user, newPassword);
+
+            //update the authentication state with the new user info
+            var authProvider = (CustomAuthStateProvider)AuthStateProvider;
+            await authProvider.UpdateAuthenticationState(user);
+
+            message = "Profile updated successfully.";
+            messageClass = "alert-success";
+            newPassword = ""; //clear the password field after update
+        }
+        catch (Exception)
+        {
+            message = "An error occurred while updating the profile.";
+            messageClass = "alert-danger";
+        }
+    }
+}
