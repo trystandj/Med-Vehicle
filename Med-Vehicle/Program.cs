@@ -2,63 +2,65 @@ using Med_Vehicle.Auth;
 using Med_Vehicle.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Med_Vehicle.Components;
-
 using DotNetEnv;
 using Med_Vehicle.MongoDB;
 using Med_Vehicle.Infrastructure;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load env variables
 DotNetEnv.Env.Load();
 
-builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-builder.Services.AddCascadingAuthenticationState(); // Importante para .NET 10
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
-builder.Services.AddSingleton<UserService>();
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear(); 
+    options.KnownProxies.Clear();
+});
 
-
-
-// Add services to the container.
-// Bind email settings and register email service
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-// builder.Services.AddScoped<EmailService>(); Uncommit when email service is needed
 
-// Reminder service for manual sending of due reminders
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddSingleton<UserService>();
+
+var webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+if (!Directory.Exists(webRoot))
+{
+    Directory.CreateDirectory(webRoot); 
+}
+builder.WebHost.UseWebRoot(webRoot);
+builder.WebHost.UseStaticWebAssets();
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ReminderService>();
-
-// 1. Register the DB Context
 builder.Services.AddSingleton<NamedCollection, MongoDbContext>();
-
-// 2. Register the Car Service
 builder.Services.AddScoped<CarService>();
-
-// 3. Register the File Upload Service
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-
-// 4. Register the History Service
 builder.Services.AddScoped<HistoryService>();
-
-// 5. Register the Vehicle Modification Service
 builder.Services.AddScoped<VehicleModificationService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+app.UseForwardedHeaders();
+
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
-var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads");
+var uploadsPath = Path.Combine(app.Environment.WebRootPath, "uploads");
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);
@@ -70,11 +72,10 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
-app.UseStaticFiles();
-
+app.UseStaticFiles(); 
 app.UseAntiforgery();
 
-app.MapStaticAssets();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
