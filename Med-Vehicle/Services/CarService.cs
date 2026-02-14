@@ -127,7 +127,6 @@ public class CarService
 
             if (car is null) return;
 
-            // Safe path resolution for Linux/Railway environments
             var rootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             
             if (!string.IsNullOrEmpty(car.ImageFileName))
