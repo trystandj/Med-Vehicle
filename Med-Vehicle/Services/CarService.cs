@@ -1,105 +1,158 @@
 namespace Med_Vehicle.MongoDB;
 
 using Med_Vehicle.Models;
-using Med_Vehicle.Infrastructure; 
+using Med_Vehicle.Infrastructure;
 using global::MongoDB.Driver;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims; 
+using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 
 public class CarService
 {
     private readonly IMongoCollection<Car> _carsCollection;
     private readonly IWebHostEnvironment _environment;
     private readonly AuthenticationStateProvider _authStateProvider;
+    private readonly ILogger<CarService> _logger;
 
-    public CarService(NamedCollection dbContext, IWebHostEnvironment environment, AuthenticationStateProvider authStateProvider)
+    public CarService(
+        NamedCollection dbContext, 
+        IWebHostEnvironment environment, 
+        AuthenticationStateProvider authStateProvider,
+        ILogger<CarService> logger)
     {
         _carsCollection = dbContext.GetCollection<Car>("Cars");
         _environment = environment;
         _authStateProvider = authStateProvider;
+        _logger = logger;
     }
 
     private async Task<string> GetCurrentUserIdAsync()
     {
-        var authState = await _authStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        return user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        try
+        {
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+            var user = authState?.User;
+            return user?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to retrieve user authentication state.");
+            return string.Empty;
+        }
     }
 
-
-    // --- CRUD Operations ---
-
-    // READ: Get All Cars (Filtered by logged-in user)
     public async Task<List<Car>> GetCarsAsync()
     {
-        var userId = await GetCurrentUserIdAsync();
-        if (string.IsNullOrEmpty(userId)) return new List<Car>();
+        try
+        {
+            var userId = await GetCurrentUserIdAsync();
+            if (string.IsNullOrEmpty(userId)) return new List<Car>();
 
-        return await _carsCollection.Find(x => x.UserId == userId).ToListAsync();
+            return await _carsCollection.Find(x => x.UserId == userId).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching cars from MongoDB.");
+            return new List<Car>(); 
+        }
     }
 
-    // CREATE: Automatically assign the correct User ID
     public async Task CreateAsync(Car newCar)
     {
-        var userId = await GetCurrentUserIdAsync();
-        if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException("User not logged in.");
+        try
+        {
+            var userId = await GetCurrentUserIdAsync();
+            if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException("User not logged in.");
 
-        newCar.UserId = userId; 
-        await _carsCollection.InsertOneAsync(newCar);
+            newCar.UserId = userId;
+            await _carsCollection.InsertOneAsync(newCar);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create car record.");
+            throw; 
+        }
     }
-        
-    // READ: Get by PublicId 
+
     public async Task<Car?> GetByPublicIdAsync(string publicId)
     {
-        var userId = await GetCurrentUserIdAsync();
-        
+        try
+        {
+            var userId = await GetCurrentUserIdAsync();
+            if (string.IsNullOrEmpty(userId)) return null;
 
-        return await _carsCollection
-            .Find(x => x.PublicId == publicId && x.UserId == userId)
-            .FirstOrDefaultAsync();
+            return await _carsCollection
+                .Find(x => x.PublicId == publicId && x.UserId == userId)
+                .FirstOrDefaultAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching car {PublicId}", publicId);
+            return null;
+        }
     }
 
-    // UPDATE: Find by PublicId 
     public async Task UpdateByPublicIdAsync(string publicId, Car updatedCar)
     {
-        var userId = await GetCurrentUserIdAsync();
-        
-        updatedCar.UserId = userId; 
-
-        var result = await _carsCollection.ReplaceOneAsync(
-            x => x.PublicId == publicId && x.UserId == userId, 
-            updatedCar);
-
-        if (result.MatchedCount == 0)
+        try
         {
-            throw new UnauthorizedAccessException("Car not found or you do not own it.");
+            var userId = await GetCurrentUserIdAsync();
+            if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException();
+
+            updatedCar.UserId = userId;
+            var result = await _carsCollection.ReplaceOneAsync(
+                x => x.PublicId == publicId && x.UserId == userId,
+                updatedCar);
+
+            if (result.MatchedCount == 0)
+            {
+                _logger.LogWarning("Update failed: Car {PublicId} not found for user {UserId}", publicId, userId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating car {PublicId}", publicId);
+            throw;
         }
     }
 
-    // DELETE: Find by PublicId 
     public async Task RemoveByPublicIdAsync(string publicId)
     {
-        var userId = await GetCurrentUserIdAsync();
-
-        var car = await _carsCollection
-            .Find(x => x.PublicId == publicId && x.UserId == userId)
-            .FirstOrDefaultAsync();
-
-        if (car is null) return; 
-
-        if (!string.IsNullOrEmpty(car.ImageFileName))
+        try
         {
-            var filePath = Path.Combine(_environment.WebRootPath, "uploads", car.ImageFileName);
-            try 
-            {
-                if (File.Exists(filePath)) File.Delete(filePath);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Could not delete file: {ex.Message}");
-            }
-        }
+            var userId = await GetCurrentUserIdAsync();
+            var car = await _carsCollection
+                .Find(x => x.PublicId == publicId && x.UserId == userId)
+                .FirstOrDefaultAsync();
 
-        await _carsCollection.DeleteOneAsync(x => x.PublicId == publicId && x.UserId == userId);
+            if (car is null) return;
+
+            // Safe path resolution for Linux/Railway environments
+            var rootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            
+            if (!string.IsNullOrEmpty(car.ImageFileName))
+            {
+                var filePath = Path.Combine(rootPath, "uploads", car.ImageFileName);
+                
+                try
+                {
+                    if (File.Exists(filePath)) 
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "File deletion failed at {Path}", filePath);
+                }
+            }
+
+            await _carsCollection.DeleteOneAsync(x => x.PublicId == publicId && x.UserId == userId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing car {PublicId}", publicId);
+            throw;
+        }
     }
 }

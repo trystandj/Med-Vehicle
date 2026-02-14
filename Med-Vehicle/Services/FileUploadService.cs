@@ -1,49 +1,52 @@
 using Microsoft.AspNetCore.Components.Forms;
-
-//  Service promises that if you give it a file ans size limit, it will store the file and return the stored filename
-public interface IFileUploadService
-{
-    Task<string> UploadFileAsync(IBrowserFile file, long maxFileSize);
-}
-
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
+using System.IO;
 
 public class FileUploadService : IFileUploadService
 {
-    // enviornment to get wwwroot path
     private readonly IWebHostEnvironment _environment;
     private readonly ILogger<FileUploadService> _logger;
 
-    // Constructor
     public FileUploadService(IWebHostEnvironment environment, ILogger<FileUploadService> logger)
     {
         _environment = environment;
         _logger = logger;
     }
 
-    // Uploads the file and returns the stored filename
     public async Task<string> UploadFileAsync(IBrowserFile file, long maxFileSize)
     {
         try
         {
-            // Ignore the original filename for security reasons and use a random name
-            var trustedFileName = Path.GetRandomFileName();
-            //  builds the full path to the uploads folder
-            var path = Path.Combine(_environment.WebRootPath, "uploads", trustedFileName);
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            // 1. Determine the Root Path safely for Railway
+            // If WebRootPath is null, we fallback to the current directory's wwwroot
+            var rootPath = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadsFolder = Path.Combine(rootPath, "uploads");
 
-            // Steaming the file to disk or saving it. Copytoasync flows the data of the file between the web server and disk
-            await using FileStream fs = new(path, FileMode.Create);
+            // 2. Ensure the directory exists
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            // 3. Preserve the file extension while keeping a trusted random name
+            var extension = Path.GetExtension(file.Name);
+            var trustedFileName = $"{Path.GetRandomFileName()}{extension}";
+            var fullPath = Path.Combine(uploadsFolder, trustedFileName);
+
+            // 4. Stream and Save
+            await using FileStream fs = new(fullPath, FileMode.Create);
             await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
 
-            _logger.LogInformation("Uploaded file: {Name} as {StoredName}", file.Name, trustedFileName);
+            _logger.LogInformation("Successfully uploaded {Name} to {FullPath}", file.Name, fullPath);
             
-            // Return the stored filename to the caller
             return trustedFileName;
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error uploading {Name}: {Message}", file.Name, ex.Message);
-            throw; 
+            _logger.LogError(ex, "Railway Upload Error for {Name}: {Message}", file.Name, ex.Message);
+            // Returning empty string instead of throwing prevents a hard crash in the Blazor circuit
+            return string.Empty; 
         }
     }
 }
