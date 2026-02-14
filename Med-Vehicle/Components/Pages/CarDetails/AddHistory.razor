@@ -79,6 +79,7 @@
     private Car? relatedCar;
     private bool isLoading = true;
 
+ 
     protected override async Task OnInitializedAsync()
     {
         try
@@ -103,7 +104,6 @@
 
         try
         {
-
             newHistory.CarId = relatedCar.Id;
 
             await HistoryService.CreateAsync(newHistory);

@@ -14,6 +14,7 @@ public class CarService
     private readonly AuthenticationStateProvider _authStateProvider;
     private readonly ILogger<CarService> _logger;
 
+    // Conostructor along with initialization of MongoDB collection, environment, authentication state provider, and logger
     public CarService(
         NamedCollection dbContext, 
         IWebHostEnvironment environment, 
@@ -26,6 +27,7 @@ public class CarService
         _logger = logger;
     }
 
+    // Helper method to get the current user's ID from the authentication state
     private async Task<string> GetCurrentUserIdAsync()
     {
         try
@@ -41,6 +43,7 @@ public class CarService
         }
     }
 
+    // CRUD operations for Car records, all of which include error handling and logging
     public async Task<List<Car>> GetCarsAsync()
     {
         try
@@ -57,6 +60,7 @@ public class CarService
         }
     }
 
+    // Create a new car record, associating it with the current user and handling any exceptions
     public async Task CreateAsync(Car newCar)
     {
         try
@@ -74,6 +78,7 @@ public class CarService
         }
     }
 
+    // Retrieve a specific car by its public ID, ensuring it belongs to the current user and handling any errors that may occur
     public async Task<Car?> GetByPublicIdAsync(string publicId)
     {
         try
@@ -92,6 +97,7 @@ public class CarService
         }
     }
 
+    // Update an existing car record by its public ID, ensuring it belongs to the current user and handling any exceptions that may arise during the update process
     public async Task UpdateByPublicIdAsync(string publicId, Car updatedCar)
     {
         try
@@ -116,6 +122,7 @@ public class CarService
         }
     }
 
+    // Remove a car record by its public ID, ensuring it belongs to the current user, and also handle the deletion of any associated image file while logging any errors that may occur during the process
     public async Task RemoveByPublicIdAsync(string publicId)
     {
         try

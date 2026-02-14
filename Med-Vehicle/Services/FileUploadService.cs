@@ -16,6 +16,9 @@ public class FileUploadService : IFileUploadService
         _logger = logger;
     }
 
+
+    // Uploads a file to the server, saving it in the "uploads" directory within wwwroot, and returns the generated file name. The method includes error 
+    // handling and logging
     public async Task<string> UploadFileAsync(IBrowserFile file, long maxFileSize)
     {
         try

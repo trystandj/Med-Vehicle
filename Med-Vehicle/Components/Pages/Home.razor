@@ -1,16 +1,91 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Home</PageTitle>
 
-<div class="home-container">
-    <img src="/images/hero-image-road.jpeg" alt="car hero image" class="home-hero-image" />
+<div class="position-relative text-center text-white mb-5">
+    <img src="/images/hero-image-road.jpeg" 
+         alt="Med-Vehicle Hero" 
+         class="w-100 object-fit-cover" 
+         style="height: 60vh; min-height: 400px; filter: brightness(0.5);" />
+
+    <div class="position-absolute top-50 start-50 translate-middle w-100 px-3">
+        <h1 class="display-3 fw-bold">Welcome to Med-Vehicle</h1>
+        <p class="lead fs-4 mb-4">Your digital garage for complete vehicle management.</p>
+        
+        <AuthorizeView>
+            <Authorized>
+                <a href="MyCars" class="btn btn-primary btn-lg px-5 shadow">Go to Garage</a>
+            </Authorized>
+            <NotAuthorized>
+                <a href="login" class="btn btn-primary btn-lg px-5 shadow">Go to Garage</a>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
 </div>
 
+<div class="container mb-5">
+    
+    <div class="row justify-content-center text-center mb-5">
+        <div class="col-lg-8">
+            <h2 class="fw-bold text-dark">Simplify Your Car Ownership</h2>
+            <p class="text-muted fs-5">
+                Med-Vehicle is the centralized place to store all information about your vehicles. 
+                Say goodbye to messy glove boxes and hello to organized digital records.
+            </p>
+        </div>
+    </div>
 
+    <div class="row g-4">
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="mb-3 text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-car-front-fill" viewBox="0 0 16 16">
+                            <path d="M2.52 3.515A2.5 2.5 0 0 1 4.82 2h6.362c1 0 1.904.596 2.298 1.515l.792 1.848c.075.175.21.319.38.404.5.25.855.715.965 1.262l.335 1.679c.033.161.049.325.049.49v.413c0 .814-.39 1.543-1 1.997V13.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1.338c-1.292.048-2.745.088-4 .088s-2.708-.04-4-.088V13.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1.892c-.61-.454-1-1.183-1-1.997v-.413a2.5 2.5 0 0 1 .049-.49l.335-1.68c.11-.546.465-1.012.964-1.261a.8.8 0 0 0 .381-.404l.792-1.848ZM3 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2m10 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2M6 8a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 fw-bold">Vehicle Details</h3>
+                    <p class="text-muted">
+                        Store essential specifications, license plate numbers, and VINs for all your vehicles in one secure dashboard.
+                    </p>
+                </div>
+            </div>
+        </div>
 
-<div class="page-content">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="mb-3 text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-clipboard-data-fill" viewBox="0 0 16 16">
+                            <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5zM10 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-6 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m2-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 fw-bold">Service History</h3>
+                    <p class="text-muted">
+                        Maintain a comprehensive log of all maintenance and repairs. Never lose track of when you last changed your oil.
+                    </p>
+                </div>
+            </div>
+        </div>
 
-    <h1>Welcome to Med-Vehicle</h1>
-    <p>This is a place to store all of the information about your vehicles and services.</p>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="card-body p-4">
+                    <div class="mb-3 text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16">
+                            <path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3m-8.322.12C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139"/>
+                        </svg>
+                    </div>
+                    <h3 class="h5 fw-bold">Digital Records</h3>
+                    <p class="text-muted">
+                        Upload images and documents related to your car, keeping insurance cards and registration handy.
+                    </p>
+                </div>
+            </div>
+        </div>
 
+    </div>
 </div>
