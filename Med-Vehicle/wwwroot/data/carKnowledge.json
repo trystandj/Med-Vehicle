@@ -1,0 +1,249 @@
+{
+  "Brands": [
+    {
+      "Name": "Toyota",
+      "Description": "Toyota is known worldwide for reliability, fuel efficiency, and hybrid innovation.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "Japan",
+      "Founded": 1937,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Oil consumption in older engines",
+        "Brake wear in compact models",
+        "Hybrid battery replacement after high mileage"
+      ]
+    },
+    {
+      "Name": "BMW",
+      "Description": "BMW is a German luxury brand focused on performance and driving dynamics.",
+      "Recommended_Fuel": "Premium gasoline (91–93 octane).",
+      "Country": "Germany",
+      "Founded": 1916,
+      "Vehicle_Category": "Luxury",
+      "Average_Maintenance_Cost": "High",
+      "Common_Problems": [
+        "Oil leaks",
+        "Cooling system failures",
+        "High maintenance costs"
+      ]
+    },
+    {
+      "Name": "Honda",
+      "Description": "Honda is known for reliability, efficient engines, and affordable maintenance.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "Japan",
+      "Founded": 1948,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Transmission issues in older models",
+        "Air conditioning failures",
+        "Paint fading"
+      ]
+    },
+    {
+      "Name": "Suzuki",
+      "Description": "Suzuki produces compact and affordable vehicles popular in Asia and Latin America.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "Japan",
+      "Founded": 1909,
+      "Vehicle_Category": "Compact",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Suspension wear",
+        "Rust in humid climates",
+        "Electrical minor issues"
+      ]
+    },
+    {
+      "Name": "Chevrolet",
+      "Description": "Chevrolet is an American brand offering trucks, SUVs, and sedans worldwide.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "United States",
+      "Founded": 1911,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Medium",
+      "Common_Problems": [
+        "Transmission problems in some automatic models",
+        "Engine sensor failures",
+        "Electrical issues"
+      ]
+    },
+    {
+      "Name": "Renault",
+      "Description": "Renault is a French manufacturer known for compact cars and European engineering.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87–91 octane depending on model).",
+      "Country": "France",
+      "Founded": 1899,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Medium",
+      "Common_Problems": [
+        "Electrical system faults",
+        "Turbocharger issues",
+        "Automatic transmission problems"
+      ]
+    },
+    {
+      "Name": "Chery",
+      "Description": "Chery is a Chinese automotive manufacturer expanding globally with affordable vehicles.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "China",
+      "Founded": 1997,
+      "Vehicle_Category": "Budget",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Build quality inconsistencies",
+        "Electrical issues",
+        "Premature suspension wear"
+      ]
+    },
+    {
+      "Name": "DFSK",
+      "Description": "DFSK (Dongfeng Sokon) is a Chinese manufacturer producing budget-friendly SUVs and vans.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "China",
+      "Founded": 2003,
+      "Vehicle_Category": "Budget",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Interior material wear",
+        "Electrical faults",
+        "Limited spare parts availability"
+      ]
+    },
+    {
+      "Name": "SWM",
+      "Description": "SWM is a Chinese-Italian automotive brand focusing on SUVs and crossovers.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "China",
+      "Founded": 2014,
+      "Vehicle_Category": "Budget SUV",
+      "Average_Maintenance_Cost": "Medium",
+      "Common_Problems": [
+        "Electronics glitches",
+        "Transmission responsiveness",
+        "Sensor calibration issues"
+      ]
+    },
+    {
+      "Name": "Ford",
+      "Description": "Ford is an American brand known for trucks, SUVs, and performance vehicles like Mustang.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane), premium for performance models.",
+      "Country": "United States",
+      "Founded": 1903,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Medium",
+      "Common_Problems": [
+        "Transmission issues (some automatic models)",
+        "EcoBoost coolant leaks",
+        "Electrical sensor failures"
+      ]
+    },
+    {
+      "Name": "Hyundai",
+      "Description": "Hyundai is a South Korean brand known for modern design and strong warranties.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "South Korea",
+      "Founded": 1967,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Engine knocking (older models)",
+        "Paint issues",
+        "Transmission hesitation"
+      ]
+    },
+    {
+      "Name": "Kia",
+      "Description": "Kia is a Korean automotive brand offering affordable and technology-focused vehicles.",
+      "Recommended_Fuel": "Regular unleaded gasoline (87 octane).",
+      "Country": "South Korea",
+      "Founded": 1944,
+      "Vehicle_Category": "Mainstream",
+      "Average_Maintenance_Cost": "Low",
+      "Common_Problems": [
+        "Engine recall issues",
+        "Electrical problems",
+        "Premature brake wear"
+      ]
+    }
+  ],
+
+  "best_cars_last_10_years": [
+    {
+      "model": "Toyota Corolla",
+      "category": "Sedan",
+      "reason": "Known for reliability, fuel efficiency, and affordability."
+    },
+    {
+      "model": "Tesla Model 3",
+      "category": "Electric",
+      "reason": "One of the most successful and affordable electric vehicles globally."
+    },
+    {
+      "model": "Ford F-150",
+      "category": "Truck",
+      "reason": "Best-selling truck with strong performance and versatility."
+    },
+    {
+      "model": "Porsche 911",
+      "category": "Sports Car",
+      "reason": "Iconic design with consistent performance evolution."
+    },
+    {
+      "model": "BMW M3",
+      "category": "Performance Sedan",
+      "reason": "Combines luxury and high-performance engineering."
+    }
+  ],
+
+  "electric_vehicles": [
+    {
+      "model": "Tesla Model S",
+      "range_km": 600,
+      "description": "Luxury electric sedan with impressive acceleration and technology."
+    },
+    {
+      "model": "Ford Mustang Mach-E",
+      "range_km": 490,
+      "description": "Electric SUV combining Mustang performance identity with EV innovation."
+    },
+    {
+      "model": "Hyundai Ioniq 5",
+      "range_km": 480,
+      "description": "Futuristic design with fast charging capabilities."
+    }
+  ],
+
+  "sports_cars": [
+    {
+      "model": "Nissan GT-R",
+      "nickname": "Godzilla",
+      "description": "High-performance Japanese sports car known for advanced AWD technology."
+    },
+    {
+      "model": "Chevrolet Corvette",
+      "description": "American sports car icon with strong V8 performance."
+    },
+    {
+      "model": "Ferrari 488",
+      "description": "Italian supercar with turbocharged V8 and aerodynamic excellence."
+    }
+  ],
+
+  "car_history": [
+    {
+      "event": "First mass production car",
+      "description": "The Ford Model T (1908) made cars affordable for the general public."
+    },
+    {
+      "event": "Birth of Hybrid Cars",
+      "description": "The Toyota Prius (1997) became the first mass-produced hybrid vehicle."
+    },
+    {
+      "event": "Electric vehicle revolution",
+      "description": "Tesla accelerated EV adoption in the 2010s with long-range battery technology."
+    }
+  ]
+}

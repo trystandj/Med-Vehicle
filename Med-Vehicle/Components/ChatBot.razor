@@ -1,0 +1,86 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthProvider
+@namespace Med_Vehicle.Components
+@inject IJSRuntime JS
+@inject FakeAIService FakeAI
+
+<div class="chat-toggle" @onclick="ToggleChat">
+    💬
+</div>
+
+@if (IsOpen)
+{
+    <div class="chatbox shadow">
+        <div class="chat-header">
+            Med-Vehicle Assistant
+        </div>
+
+        <div class="chat-messages" @ref="chatContainer">
+            @foreach (var msg in Messages)
+            {
+                <div class="@(msg.IsUser ? "user-msg" : "bot-msg")">
+                    @msg.Text
+                </div>
+            }
+        </div>
+
+        <div class="chat-input">
+        <input @bind="UserInput"
+            @bind:event="oninput"
+            @onkeyup="HandleKeyUp"
+            placeholder="Ask something..." />
+
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsOpen = false;
+    private string UserInput;
+    private List<Message> Messages = new();
+    private ElementReference chatContainer;
+
+    async Task HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+
+    void ToggleChat()
+    {
+        IsOpen = !IsOpen;
+    }
+
+    async Task ScrollToBottom()
+    {
+        await Task.Delay(50);
+
+        await JS.InvokeVoidAsync("scrollToBottom", chatContainer);
+    }
+
+
+    async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(UserInput))
+            return;
+
+        Messages.Add(new Message { Text = UserInput, IsUser = true });
+
+        var response = await FakeAI.AskAsync(UserInput);
+
+        Messages.Add(new Message { Text = response, IsUser = false });
+
+        UserInput = "";
+
+        await ScrollToBottom();
+    }
+
+    class Message
+    {
+        public string Text { get; set; }
+        public bool IsUser { get; set; }
+    }
+}
