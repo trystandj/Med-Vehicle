@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Load environment variables
 DotNetEnv.Env.Load();
 
+// Chatbot 
+builder.Services.AddScoped<FakeAIService>();
+
 // Configure Forwarded Headers
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {

@@ -1,0 +1,104 @@
+.chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+    z-index: 9999;
+}
+
+.chat-toggle:hover {
+    transform: scale(1.1);
+}
+
+.chatbox {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-in-out;
+    z-index: 9999;
+}
+
+.chat-header {
+    background: #0d6efd;
+    color: white;
+    padding: 15px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f5f7fb;
+}
+
+.user-msg {
+    background: #0d6efd;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 18px 18px 0 18px;
+    margin-bottom: 10px;
+    max-width: 75%;
+    margin-left: auto;
+}
+
+.bot-msg {
+    background: #e4e6eb;
+    color: #333;
+    padding: 10px 14px;
+    border-radius: 18px 18px 18px 0;
+    margin-bottom: 10px;
+    max-width: 75%;
+    white-space: pre-line;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background: white;
+}
+
+.chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    border-radius: 20px;
+    background: #f1f1f1;
+    outline: none;
+}
+
+.chat-input button {
+    margin-left: 10px;
+    background: #0d6efd;
+    border: none;
+    color: white;
+    padding: 0 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
